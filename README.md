@@ -1,2 +1,2 @@
 # algorithms
-JavaScript数据结构与算法练习
+TypeScript数据结构与算法练习
