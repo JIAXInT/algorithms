@@ -10,9 +10,6 @@ function hotPotato(names: string[], num: number) {
         queue.enqueue(name)
     }
 
-
-
-
     //3、淘汰的规则
     while (queue.size() > 1) {
 
@@ -23,8 +20,6 @@ function hotPotato(names: string[], num: number) {
     
         queue.dequeue()
     }
-
-
 
 
     const leftName = queue.dequeue()!
