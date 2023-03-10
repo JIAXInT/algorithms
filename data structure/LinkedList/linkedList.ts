@@ -77,7 +77,9 @@ class LinkedList<T>{
     //删除方法
     removeAt(position: number): T | null{
         //越界的判断
-        if(position < 0 || position >= this.size) return null
+        if (position < 0 || position >= this.size) return null
+        
+        return null
     }
 }
 
