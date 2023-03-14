@@ -20,6 +20,27 @@ class HashTable<T = any> {
         
         return index
     }
+
+    private resize(newLength:number){
+        //设置新的长度
+        this.length = newLength
+
+        //数据初始化
+        const oldStorage = this.storage
+        this.storage = []
+        this.count = 0
+
+        //获取原来所有的数据，并且重新放入到新的容量数组中
+        oldStorage.forEach(bucket => {
+            if(!bucket) return
+
+            for(let i = 0;i < bucket.length;i++){
+                const tuple = bucket[i]
+                this.put(tuple[0],tuple[1])
+            }
+        })
+
+    }
     
     //插入、修改
     put(key: string, value: T) {
@@ -47,10 +68,16 @@ class HashTable<T = any> {
             }
         }
 
-        //如果上面代码m没有进行覆盖，那么在该位置进行添加
+        //如果上面代码没有进行覆盖，那么在该位置进行添加
         if (!isUpdate) {
             bucket.push([key, value])
             this.count++
+
+            //发现loadFactor比例已经大于0.75，那么就直接扩容
+            const loadFactor = this.count / this.length
+            if( loadFactor > 0.75){
+                this.resize(this.length * 2)
+            }
         }
     }
 
@@ -69,6 +96,37 @@ class HashTable<T = any> {
             const tupleKey = tuple[0]
             const tupleValue = tuple[1]
             if (tupleKey === key) {
+                return tupleValue
+            }
+        }
+
+        return undefined
+    }
+
+    //删除操作
+    delete(key:string):T | undefined {
+        //获取索引的位置
+        const index  = this.hashFnc(key,this.length)
+
+        //获取bucket值
+        const bucket = this.storage[index]
+        if(!bucket) return undefined
+
+        //遍历桶数组
+        for(let i =0;i < bucket.length;i++){
+            const tuple = bucket[i]
+            const tupleKey = tuple[0]
+            const tupleValue = tuple[1]
+            if(tupleKey === key){
+                bucket.splice(i,1)
+                this.count--
+
+                //如果loadFactor小于0.25，进行缩容操作
+                const loadFactor = this.count / this.length
+                if(loadFactor < 0.25 && this.length > 7){
+                    this.resize(Math.floor(this.length / 2))
+                }
+
                 return tupleValue
             }
         }
